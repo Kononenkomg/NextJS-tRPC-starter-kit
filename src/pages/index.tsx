@@ -7,13 +7,10 @@ const Home: NextPage = () => {
 
   const { data: check } = trpc.check.useQuery()
 
-  console.log(check)
-
   return (
     <Layout>
       <HelloWorldWrapper>
-        <p>Hello World</p>
-        {/* <p>{check?.ok}</p> */}
+        <p>Hello World the status of up is {String(check?.ok)}</p>
       </HelloWorldWrapper>
     </Layout>
   )
