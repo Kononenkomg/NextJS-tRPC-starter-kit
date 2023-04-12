@@ -6,12 +6,9 @@ import { trpc } from '@/utils/trpc'
 import { QueryClient } from '@tanstack/react-query'
 import { httpBatchLink } from '@trpc/client'
 import superjson from 'superjson'
+import nextConfig from 'next.config.js'
 
-const getBaseUrl = (): string => {
-  if (typeof window === 'undefined') return ''
-  // here we will have to return prod url
-  return ''
-}
+const basePath = String(nextConfig.basePath)
 
 const MyApp = ({ Component, pageProps }: AppProps): ReactElement | null => {
   const [queryClient] = useState(
@@ -34,7 +31,7 @@ const MyApp = ({ Component, pageProps }: AppProps): ReactElement | null => {
       transformer: superjson,
       links: [
         httpBatchLink({
-          url: `${getBaseUrl()}/api/trpc`
+          url: `${basePath}/api/trpc`
         })
       ]
     })
@@ -47,13 +44,15 @@ const MyApp = ({ Component, pageProps }: AppProps): ReactElement | null => {
   })
 
   return (
-
-    <trpc.Provider client={trpcClient} queryClient={queryClient}>
-      <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-        <Component {...pageProps} />
-      </PersistQueryClientProvider>
-    </trpc.Provider>
-
+    <>
+      {persister && (
+        <trpc.Provider client={trpcClient} queryClient={queryClient}>
+          <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
+            <Component {...pageProps} />
+          </PersistQueryClientProvider>
+        </trpc.Provider>
+      )}
+    </>
   )
 }
 

@@ -1,6 +1,7 @@
 import { trpc } from "@/utils/trpc"
 import { NextPage } from "next"
 import styled from 'styled-components'
+import Layout from "@/pages/_layout"
 
 const Home: NextPage = () => {
 
@@ -9,10 +10,12 @@ const Home: NextPage = () => {
   console.log(check)
 
   return (
-    <HelloWorldWrapper>
-      <p>Hello World</p>
-      {/* <p>{check?.ok}</p> */}
-    </HelloWorldWrapper>
+    <Layout>
+      <HelloWorldWrapper>
+        <p>Hello World</p>
+        {/* <p>{check?.ok}</p> */}
+      </HelloWorldWrapper>
+    </Layout>
   )
 }
 
