@@ -1,9 +1,7 @@
 import type { AppProps } from 'next/app'
-import { ReactElement, useEffect, useState } from 'react'
-import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client'
-import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
+import { ReactElement, useState } from 'react'
 import { trpc } from '@/utils/trpc'
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { httpBatchLink } from '@trpc/client'
 import superjson from 'superjson'
 import nextConfig from 'next.config.js'
@@ -12,11 +10,6 @@ import Head from 'next/head'
 const basePath = String(nextConfig.basePath)
 
 const MyApp = ({ Component, pageProps }: AppProps): ReactElement | null => {
-  // TODO: need to find a better way to do this
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true)
-  }, [])
 
   const [queryClient] = useState(
     () =>
@@ -44,26 +37,16 @@ const MyApp = ({ Component, pageProps }: AppProps): ReactElement | null => {
     })
   )
 
-  if (typeof window === 'undefined') return null
-
-  const persister = createSyncStoragePersister({
-    storage: window.sessionStorage
-  })
-
   return (
     <>
-      {mounted && (
-        <>
-          <Head>
-            <title>Next.js + TRPC + React Query</title>
-          </Head>
-          <trpc.Provider client={trpcClient} queryClient={queryClient}>
-            <PersistQueryClientProvider client={queryClient} persistOptions={{ persister }}>
-              <Component {...pageProps} />
-            </PersistQueryClientProvider>
-          </trpc.Provider>
-        </>
-      )}
+      <Head>
+        <title>Next.js + TRPC + React Query</title>
+      </Head>
+      <trpc.Provider client={trpcClient} queryClient={queryClient}>
+        <QueryClientProvider client={queryClient} >
+          <Component {...pageProps} />
+        </QueryClientProvider>
+      </trpc.Provider>
     </>
   )
 }
